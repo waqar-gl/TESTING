@@ -1,11 +1,18 @@
 from core.config import Config
-from core.logger import setup_logger
-
-logger = setup_logger()
+from core.notifier import NtfyNotifier
+from core.reporter import Reporter
 
 def main():
-    logger.info("Starting report generation...")
     cfg = Config()
-    logger.info(cfg["timezone"])
+    report = Reporter().run()
+    notifier = NtfyNotifier(
+        cfg["ntfy"]["server"],
+        cfg["ntfy"]["topic"],
+    )
+    notifier.send(
+        "DevOps Security Digest",
+        report,
+    )
+
 if __name__ == "__main__":
     main()
